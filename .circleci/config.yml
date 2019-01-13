@@ -11,7 +11,7 @@ jobs:
           environment:
             - GITHUB_PAGES_REPO: thesellsword-machineuser/helm-charts
             - GITHUB_PAGES_BRANCH: master
-            - HELM_CHARTS_SOURCE: charts
+            - HELM_CHARTS_SOURCE: ./charts
       - run:
           name: Verify
           command: |
