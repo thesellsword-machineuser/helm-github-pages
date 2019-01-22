@@ -88,7 +88,10 @@ secretKeyRef:
   command: {{ .image.command }}
 {{- end }} 
 {{- if .image.args }}
-  args: {{ .image.args }}
+  args:
+{{- range .image.args }}
+    - {{ . }}
+{{- end }}
 {{- end }} 
 {{- if .env }}
   env:
