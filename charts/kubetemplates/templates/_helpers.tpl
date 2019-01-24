@@ -176,7 +176,7 @@ spec:
 {{- define "kubernetes.batch.cronjobspec" -}}
 concurrencyPolicy: {{ default "Forbid" .concurrencyPolicy }}
 failedJobsHistoryLimit: {{ default 1 .failedJobsHistoryLimit }}
-schedule: {{ .schedule }}
+schedule: {{ .schedule | quote }}
 startingDeadlineSeconds: {{ default 60 .startingDeadlineSeconds }}
 successfulJobsHistoryLimit: {{ default 0 .successfulJobsHistoryLimit }}
 suspend: {{ default false .suspend }}
