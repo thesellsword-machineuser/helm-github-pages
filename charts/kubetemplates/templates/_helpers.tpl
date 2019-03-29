@@ -80,6 +80,38 @@ secretKeyRef:
 {{- end }}
 {{- end -}}
 
+{{- define "kubernetes.core.secretvolumesource" -}}
+secretName: {{ .secretName }}
+{{- if .optional }}
+optional: {{ .optional }}
+{{- end }}
+{{- if .defaultMode }}
+defaultMode: {{ .defaultMode }}
+{{- end }}
+{{- end -}}
+
+{{- define "kubernetes.core.volume" -}}
+name: {{ .name }}
+{{- if .secret }}
+secret:
+{{- include "kubernetes.core.secretvolumesource" .secret | nindent 4 }}
+{{- end }}
+{{- end -}}
+
+{{- define "kuberntes.core.volumemount" -}}
+name: {{ .name }}
+mountPath: {{ .mountPath }}
+{{- if .readOnly }}
+readOnly: {{ .readOnly }}
+{{- end }}
+{{- if .mountPropogation }}
+mountPropogation: {{ .mountPropogation }}
+{{- end }}
+{{- if .subPath }}
+mountPropogation: {{ .subPath }}
+{{- end }}
+{{- end -}}
+
 {{- define "kubernetes.core.container" -}}
 - name: {{ .name }}
   image: "{{ .image.repository }}:{{ .image.tag }}"
@@ -117,6 +149,13 @@ secretKeyRef:
 {{- include "kubernetes.core.resourcerequirements" .resources | nindent 4 }}
 {{- end }}
 
+{{- if .volumeMounts }}
+  volumeMounts:
+{{- range $key, $value := .volumeMounts }}
+{{- include "kubernetes.core.volumemount" $value | nindent 4 }}
+{{- end }}
+{{- end }}
+
 {{- end }}
 
 {{- define "kubernetes.core.serviceport" -}}
@@ -150,6 +189,14 @@ containers:
 {{- range $key, $value := .containers }}
 {{- include "kubernetes.core.container" $value | nindent 2 }}
 {{- end }}
+
+{{- if .volumes }}
+volumes:
+{{- range $key, $value := .volumes }}
+{{- include "kubernetes.core.volume" $value | nindent 2 }}
+{{- end }}
+{{- end }}
+
 {{- end -}}
 
 {{- define "kubernetes.core.podtemplatespec" -}}
