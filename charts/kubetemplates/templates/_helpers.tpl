@@ -91,24 +91,24 @@ defaultMode: {{ .defaultMode }}
 {{- end -}}
 
 {{- define "kubernetes.core.volume" -}}
-name: {{ .name }}
+- name: {{ .name }}
 {{- if .secret }}
-secret:
+  secret:
 {{- include "kubernetes.core.secretvolumesource" .secret | nindent 4 }}
 {{- end }}
 {{- end -}}
 
 {{- define "kubernetes.core.volumemount" -}}
-name: {{ .name }}
-mountPath: {{ .mountPath }}
+- name: {{ .name }}
+  mountPath: {{ .mountPath }}
 {{- if .readOnly }}
-readOnly: {{ .readOnly }}
+  readOnly: {{ .readOnly }}
 {{- end }}
 {{- if .mountPropogation }}
-mountPropogation: {{ .mountPropogation }}
+  mountPropogation: {{ .mountPropogation }}
 {{- end }}
 {{- if .subPath }}
-mountPropogation: {{ .subPath }}
+  mountPropogation: {{ .subPath }}
 {{- end }}
 {{- end -}}
 
