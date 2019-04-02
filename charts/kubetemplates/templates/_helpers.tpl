@@ -98,7 +98,7 @@ secret:
 {{- end }}
 {{- end -}}
 
-{{- define "kuberntes.core.volumemount" -}}
+{{- define "kubernetes.core.volumemount" -}}
 name: {{ .name }}
 mountPath: {{ .mountPath }}
 {{- if .readOnly }}
