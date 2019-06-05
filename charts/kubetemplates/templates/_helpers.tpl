@@ -376,3 +376,10 @@ spec:
 {{- include "kubernetes.core.container" $value | nindent 8 }}
 {{- end }}
 {{- end -}}
+
+{{- if .volumes }}
+      volumes:
+{{- range $key, $value := .volumes }}
+{{- include "kubernetes.core.volume" $value | nindent 8 }}
+{{- end }}
+{{- end }}
