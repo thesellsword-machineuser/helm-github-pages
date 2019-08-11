@@ -375,11 +375,10 @@ spec:
 {{- range $key, $value := .Values.containers }}
 {{- include "kubernetes.core.container" $value | nindent 8 }}
 {{- end }}
-{{- end -}}
-
 {{- if .Values.volumes }}
       volumes:
 {{- range $key, $value := .Values.volumes }}
 {{- include "kubernetes.core.volume" $value | nindent 8 }}
 {{- end }}
 {{- end }}
+{{- end -}}
