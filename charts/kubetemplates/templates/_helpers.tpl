@@ -1,12 +1,3 @@
-{{- define "kubernetes.meta.objectmeta" -}}
-name: {{ default $.Chart.Name .name | trunc 63 | trimSuffix "-" }}
-labels:
-  app.kubernetes.io/name: {{ default $.Chart.Name .name | trunc 63 | trimSuffix "-" }}
-  helm.sh/chart: {{ printf "%s-%s" $.Chart.Name $.Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
-  app.kubernetes.io/instance: {{ $.Release.Name }}
-  app.kubernetes.io/managed-by: {{ $.Release.Service }}
-{{- end -}}
-
 {{- define "kubernetes.core.containerport" -}}
 - name: {{ .name }}
   protocol: {{ .protocol | default "TCP" }}
@@ -240,7 +231,7 @@ kind: Ingress
 metadata:
   name: {{ default .Chart.Name .Values.ingress.metadata.name | trunc 63 | trimSuffix "-" }}
   labels:
-    app.kubernetes.io/name: {{ .Chart.Name | trunc 63 | trimSuffix "-" }}
+    app.kubernetes.io/name: {{ default .Chart.Name .Values.ingress.metadata.name | trunc 63 | trimSuffix "-" }}
     helm.sh/chart: {{ printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
@@ -282,7 +273,7 @@ kind: Secret
 metadata:
   name: {{ default $.Chart.Name $value.metadata.name | trunc 63 | trimSuffix "-" }}
   labels:
-    app.kubernetes.io/name: {{ $.Chart.Name | trunc 63 | trimSuffix "-" }}
+    app.kubernetes.io/name: {{ default .Chart.Name $value.metadata.name | trunc 63 | trimSuffix "-" }}
     helm.sh/chart: {{ printf "%s-%s" $.Chart.Name $.Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
     app.kubernetes.io/instance: {{ $.Release.Name }}
     app.kubernetes.io/managed-by: {{ $.Release.Service }}
@@ -306,7 +297,7 @@ kind: CronJob
 metadata:
   name: {{ default $.Chart.Name $value.metadata.name | trunc 63 | trimSuffix "-" }}
   labels:
-    app.kubernetes.io/name: {{ $.Chart.Name | trunc 63 | trimSuffix "-" }}
+    app.kubernetes.io/name: {{ default .Chart.Name $value.metadata.name | trunc 63 | trimSuffix "-" }}
     helm.sh/chart: {{ printf "%s-%s" $.Chart.Name $.Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
     app.kubernetes.io/instance: {{ $.Release.Name }}
     app.kubernetes.io/managed-by: {{ $.Release.Service }}
@@ -324,7 +315,7 @@ kind: Service
 metadata:
   name: {{ default $.Chart.Name $value.metadata.name | trunc 63 | trimSuffix "-" }}
   labels:
-    app.kubernetes.io/name: {{ $.Chart.Name | trunc 63 | trimSuffix "-" }}
+    app.kubernetes.io/name: {{ default $.Chart.Name $value.metadata.name | trunc 63 | trimSuffix "-" }}
     helm.sh/chart: {{ printf "%s-%s" $.Chart.Name $.Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
     app.kubernetes.io/instance: {{ $.Release.Name }}
     app.kubernetes.io/managed-by: {{ $.Release.Service }}
@@ -341,7 +332,7 @@ spec:
 {{- end }}
 {{- end }}
   selector:
-    app.kubernetes.io/name: {{ $.Chart.Name | trunc 63 | trimSuffix "-" }}
+    app.kubernetes.io/name: {{ default $.Chart.Name $value.metadata.name | trunc 63 | trimSuffix "-" }}
     app.kubernetes.io/instance: {{ $.Release.Name }}
 {{- end -}}
 {{- end -}}
