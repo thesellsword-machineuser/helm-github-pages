@@ -17,14 +17,14 @@ requests:
   memory: 512Mi
   cpu: 500M
 {{- end }}
-{{- if .limits -}}
+{{- if .limits }}
 limits:
   memory: {{ .limits.memory | default "768Mi" }}
   cpu: {{ .limits.cpu | default "1000m" }}
 {{- else }}
-requests:
+limits:
   memory: 786Mi
-  cpu: 1000M
+  cpu: 1000m
 {{- end }}
 {{- end -}}
 
@@ -136,7 +136,7 @@ defaultMode: {{ .defaultMode }}
 {{- end }}
 
 {{- if .resources }}
-  readinessProbe:
+  resources:
 {{- include "kubernetes.core.resourcerequirements" .resources | nindent 4 }}
 {{- end }}
 
