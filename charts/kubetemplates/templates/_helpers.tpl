@@ -134,7 +134,7 @@ defaultMode: {{ .defaultMode }}
   resources:
     requests:
       memory: 512Mi
-      cpu: 500M
+      cpu: 500m
     limits:
       memory: 1024Mi
       cpu: 1000m
