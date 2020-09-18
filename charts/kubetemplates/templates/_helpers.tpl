@@ -12,19 +12,11 @@
 requests:
   memory: {{ .requests.memory | default "512Mi" }}
   cpu: {{ .requests.cpu | default "500m" }}
-{{- else }}
-requests:
-  memory: 512Mi
-  cpu: 500M
 {{- end }}
 {{- if .limits }}
 limits:
-  memory: {{ .limits.memory | default "768Mi" }}
+  memory: {{ .limits.memory | default "1024Mi" }}
   cpu: {{ .limits.cpu | default "1000m" }}
-{{- else }}
-limits:
-  memory: 786Mi
-  cpu: 1000m
 {{- end }}
 {{- end -}}
 
@@ -138,6 +130,14 @@ defaultMode: {{ .defaultMode }}
 {{- if .resources }}
   resources:
 {{- include "kubernetes.core.resourcerequirements" .resources | nindent 4 }}
+{{- else }}
+  resources:
+    requests:
+      memory: 512Mi
+      cpu: 500M
+    limits:
+      memory: 1024Mi
+      cpu: 1000m
 {{- end }}
 
 {{- if .volumeMounts }}
