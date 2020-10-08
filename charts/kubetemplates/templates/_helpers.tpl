@@ -332,13 +332,7 @@ spec:
 {{- end }}
 {{- end }}
   selector:
-{{- if and $value.selector ($value.selector.name) }}
-    app.kubernetes.io/name: {{ $value.selector.name | trunc 63 | trimSuffix "-" }}
-{{- else if and $value.metadata ($value.metadata.name) }}
-    app.kubernetes.io/name: {{ $value.metadata.name | trunc 63 | trimSuffix "-" }}
-{{- else }}
     app.kubernetes.io/name: {{ $.Chart.Name | trunc 63 | trimSuffix "-" }}
-{{- end }}
     app.kubernetes.io/instance: {{ $.Release.Name }}
 {{- end }}
 {{- end -}}
