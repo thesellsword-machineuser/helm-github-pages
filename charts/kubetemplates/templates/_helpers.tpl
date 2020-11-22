@@ -363,6 +363,10 @@ spec:
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
       containers:
+
+{{- range $key, $value := .Values.initContainers }}
+{{- include "kubernetes.core.container" $value | nindent 8 }}
+{{- end }}
 {{- range $key, $value := .Values.containers }}
 {{- include "kubernetes.core.container" $value | nindent 8 }}
 {{- end }}
