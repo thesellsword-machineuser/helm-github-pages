@@ -45,10 +45,22 @@ optional: {{ .optional }}
 {{- end }}
 {{- end -}}
 
+{{- define "kubernetes.core.configmapkeyselector" -}}
+key: {{ .key }}
+name: {{ .name }}
+{{- if .optional }}
+optional: {{ .optional }}
+{{- end }}
+{{- end -}}
+
 {{- define "kubernetes.core.envvarsource" -}}
 {{- if .secretKeyRef -}}
 secretKeyRef:
-{{- include "kubernetes.core.secretkeyselector" .secretKeyRef | nindent 4 }}  
+{{- include "kubernetes.core.secretkeyselector" .secretKeyRef | nindent 4 }}
+{{- end }}
+{{- if .configMapKeyRef -}}
+configMapKeyRef:
+{{- include "kubernetes.core.configmapkeyselector" .configMapKeyRef | nindent 4 }}
 {{- end }}
 {{- end -}}
 
@@ -343,6 +355,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
+  namespace: {{ .namespace }} 
   labels:
     app.kubernetes.io/name: {{ default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
     helm.sh/chart: {{ printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
