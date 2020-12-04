@@ -238,7 +238,7 @@ jobTemplate:
 {{- if .Values.ingress.enabled -}}
 {{- $ingressPaths := .Values.ingress.paths -}}
 ---
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   name: {{ default .Chart.Name .Values.ingress.metadata.name | trunc 63 | trimSuffix "-" }}
@@ -263,11 +263,11 @@ spec:
   {{- end }}
 {{- end }}
   rules:
-{{- range $key, $value := .Values.ingress.hosts }}
-    - host: {{ $value | quote }}
+{{- range $key, $value := .Values.ingress.rules }}
+    - host: {{ $value.host | quote }}
       http:
         paths:
-{{- range $key, $value1 := $ingressPaths }}
+{{- range $key, $value1 := $value.http.paths }}
           - path: {{ $value1.path }}
             backend:
               serviceName: {{ $value1.backend.serviceName }} 
