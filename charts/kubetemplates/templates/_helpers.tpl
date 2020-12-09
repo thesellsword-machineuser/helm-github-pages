@@ -117,7 +117,7 @@ defaultMode: {{ .defaultMode }}
 {{- if .image.args }}
   args:
 {{- range .image.args }}
-    - {{ . }}
+    - {{ . | quote }}
 {{- end }}
 {{- end }} 
 {{- if .env }}
@@ -182,7 +182,7 @@ maxUnavailable: {{ .maxUnavailable }}
 {{- if .rollingupdatedeployment }}
 rollingUpdate:
 {{- include "kubernetes.apps.rollingupdatedeployment" .rollingUpdateDeployment | nindent 2 }}
-{{- end }}
+{{- end -}}
 type: {{ default "RollingUpdate" .type }}
 {{- end -}}
 
@@ -344,49 +344,53 @@ spec:
 {{- end }}
 {{- end }}
   selector:
-    app.kubernetes.io/name: {{ $.Chart.Name | trunc 63 | trimSuffix "-" }}
+    app.kubernetes.io/name: {{ default $.Chart.Name $value.selector.name | trunc 63 | trimSuffix "-" }}
     app.kubernetes.io/instance: {{ $.Release.Name }}
 {{- end }}
 {{- end -}}
 
 {{- define "kubernetes.apps.deployment" -}}
+{{- range $key, $value := .Values.deployments }}
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
-  namespace: {{ .namespace }} 
+  name: {{ default $.Chart.Name $value.metadata.name | trunc 63 | trimSuffix "-" }}
   labels:
-    app.kubernetes.io/name: {{ default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
-    helm.sh/chart: {{ printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/name: {{ default $.Chart.Name $value.metadata.name | trunc 63 | trimSuffix "-" }}
+    helm.sh/chart: {{ printf "%s-%s" $.Chart.Name $.Chart.Version | replace "+" "_" | trunc 65 | trimSuffix "-" }}
+    app.kubernetes.io/instance: {{ $.Release.Name }}
+    app.kubernetes.io/managed-by: {{ $.Release.Service }}
 spec:
-  replicas: {{ .Values.replicaCount | default 1 }}
+  replicas: {{ $value.replicaCount | default 1 }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
-      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/name: {{ default $.Chart.Name $value.metadata.name | trunc 63 | trimSuffix "-" }}
+      app.kubernetes.io/instance: {{ $.Release.Name }}
   strategy:
-{{- include "kubernetes.apps.deploymentstrategy" .strategy | nindent 4 }}
+{{- include "kubernetes.apps.deploymentstrategy" $value.strategy | nindent 4 }}
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: {{ default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
-        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/name: {{ default $.Chart.Name $value.metadata.name | trunc 63 | trimSuffix "-" }}
+        app.kubernetes.io/instance: {{ $.Release.Name }}
     spec:
+      initContainers:
+
+{{- range $key, $value1 := $value.initContainers }}
+{{- include "kubernetes.core.container" $value1 | nindent 8 }}
+{{- end }}
       containers:
 
-{{- range $key, $value := .Values.initContainers }}
-{{- include "kubernetes.core.container" $value | nindent 8 }}
+{{- range $key, $value1 := $value.containers }}
+{{- include "kubernetes.core.container" $value1 | nindent 8 }}
 {{- end }}
-{{- range $key, $value := .Values.containers }}
-{{- include "kubernetes.core.container" $value | nindent 8 }}
-{{- end }}
-{{- if .Values.volumes }}
+{{- if $value.volumes }}
       volumes:
-{{- range $key, $value := .Values.volumes }}
-{{- include "kubernetes.core.volume" $value | nindent 8 }}
+
+{{- range $key, $value1 := $value.volumes }}
+{{- include "kubernetes.core.volume" $value1 | nindent 8 }}
+{{- end }}
 {{- end }}
 {{- end }}
 {{- end -}}
