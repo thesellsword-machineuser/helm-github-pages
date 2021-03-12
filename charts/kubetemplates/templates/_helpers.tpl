@@ -214,6 +214,12 @@ activeDeadlineSeconds: {{ .activeDeadlineSeconds }}
 {{- if .backoffLimit }}
 backoffLimit: {{ .backoffLimit }}
 {{- end }}
+{{- if .parallelism }}
+parallelism: {{ .parallelism }}
+{{- end }}
+{{- if .completions }}
+completions: {{ .completions }}
+{{- end }}
 template:
 {{- include "kubernetes.core.podtemplatespec" .template | nindent 2 }}
 {{- end -}}
@@ -300,6 +306,28 @@ data:
 {{- end -}}
 {{- end -}}
 {{- end -}}
+
+{{- define "kubernetes.batch.job" -}}
+{{- range $key, $value := .Values.jobs }}
+---
+apiVersion: batch/v1
+kind: job
+metadata:
+  name: {{ default $.Chart.Name $value.metadata.name | trunc 63 | trimSuffix "-" }}
+  labels:
+    app.kubernetes.io/name: {{ default .Chart.Name $value.metadata.name | trunc 63 | trimSuffix "-" }}
+    helm.sh/chart: {{ printf "%s-%s" $.Chart.Name $.Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
+    app.kubernetes.io/instance: {{ $.Release.Name }}
+    app.kubernetes.io/managed-by: {{ $.Release.Service }}
+{{- if $value.metadata.annotations }}
+  annotations:
+{{ toYaml $value.metadata.annotations | nindent 4 }}
+{{- end }}
+spec:
+{{- include "kubernetes.batch.jobspec" .spec | nindent 2 }}
+{{- end }}
+{{- end -}}
+
 
 {{- define "kubernetes.batch.cronjob" -}}
 {{- range $key, $value := .Values.cronjobs }}
