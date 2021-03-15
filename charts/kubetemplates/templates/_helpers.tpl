@@ -315,13 +315,21 @@ kind: job
 metadata:
   name: {{ default $.Chart.Name $value.metadata.name | trunc 63 | trimSuffix "-" }}
   labels:
-    app.kubernetes.io/name: {{ default .Chart.Name $value.metadata.name | trunc 63 | trimSuffix "-" }}
+    app.kubernetes.io/name: {{ default $.Chart.Name $value.metadata.name | trunc 63 | trimSuffix "-" }}
     helm.sh/chart: {{ printf "%s-%s" $.Chart.Name $.Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
     app.kubernetes.io/instance: {{ $.Release.Name }}
     app.kubernetes.io/managed-by: {{ $.Release.Service }}
 {{- if $value.metadata.annotations }}
   annotations:
-{{ toYaml $value.metadata.annotations | nindent 4 }}
+{{- if $value.metadata.annotations "helm.sh/hook" }}
+  "helm.sh/hook": {{ $value.metadata.annotations "helm.sh/hook" }}
+{{- end }}
+{{- if $value.metadata.annotations "helm.sh/hook-weight" }}
+  "helm.sh/hook-weight": {{ $value.metadata.annotations "helm.sh/hook-weight" }}
+{{- end }}
+{{- if $value.metadata.annotations "helm.sh/hook-delete-policy" }}
+  "helm.sh/hook-delete-policy": {{ $value.metadata.annotations "helm.sh/hook-delete-policy" }}
+{{- end }}
 {{- end }}
 spec:
 {{- include "kubernetes.batch.jobspec" .spec | nindent 2 }}
@@ -337,7 +345,7 @@ kind: CronJob
 metadata:
   name: {{ default $.Chart.Name $value.metadata.name | trunc 63 | trimSuffix "-" }}
   labels:
-    app.kubernetes.io/name: {{ default .Chart.Name $value.metadata.name | trunc 63 | trimSuffix "-" }}
+    app.kubernetes.io/name: {{ default $.Chart.Name $value.metadata.name | trunc 63 | trimSuffix "-" }}
     helm.sh/chart: {{ printf "%s-%s" $.Chart.Name $.Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
     app.kubernetes.io/instance: {{ $.Release.Name }}
     app.kubernetes.io/managed-by: {{ $.Release.Service }}
@@ -403,20 +411,19 @@ spec:
         app.kubernetes.io/name: {{ default $.Chart.Name $value.metadata.name | trunc 63 | trimSuffix "-" }}
         app.kubernetes.io/instance: {{ $.Release.Name }}
     spec:
+{{- if $value.initContainers }}
       initContainers:
-
-{{- range $key, $value1 := $value.initContainers }}
+{{ range $key, $value1 := $value.initContainers }}
 {{- include "kubernetes.core.container" $value1 | nindent 8 }}
 {{- end }}
+{{- end }}
       containers:
-
-{{- range $key, $value1 := $value.containers }}
+{{ range $key, $value1 := $value.containers }}
 {{- include "kubernetes.core.container" $value1 | nindent 8 }}
 {{- end }}
 {{- if $value.volumes }}
       volumes:
-
-{{- range $key, $value1 := $value.volumes }}
+{{ range $key, $value1 := $value.volumes }}
 {{- include "kubernetes.core.volume" $value1 | nindent 8 }}
 {{- end }}
 {{- end }}
