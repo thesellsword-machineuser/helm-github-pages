@@ -311,7 +311,7 @@ data:
 {{- range $key, $value := .Values.jobs }}
 ---
 apiVersion: batch/v1
-kind: job
+kind: Job
 metadata:
   name: {{ default $.Chart.Name $value.metadata.name | trunc 63 | trimSuffix "-" }}
   labels:
