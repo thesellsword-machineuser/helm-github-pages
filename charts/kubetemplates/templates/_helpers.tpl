@@ -319,16 +319,21 @@ metadata:
     helm.sh/chart: {{ printf "%s-%s" $.Chart.Name $.Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
     app.kubernetes.io/instance: {{ $.Release.Name }}
     app.kubernetes.io/managed-by: {{ $.Release.Service }}
-{{- if $value.metadata.annotations }}
+{{- if or ($value.metadata.annotations) ($value.metadata.helm_sh_annotations) }}
   annotations:
-{{- if $value.metadata.annotations "helm.sh/hook" }}
-  "helm.sh/hook": {{ $value.metadata.annotations "helm.sh/hook" }}
+{{- if $value.metadata.annotations }}
+{{ toYaml $value.metadata.annotations | nindent 4 }}
 {{- end }}
-{{- if $value.metadata.annotations "helm.sh/hook-weight" }}
-  "helm.sh/hook-weight": {{ $value.metadata.annotations "helm.sh/hook-weight" }}
+{{- if $value.metadata.helm_sh_annotations }}
+{{- if $value.metadata.helm_sh_annotations.helm_sh_hook }}
+    "helm.sh/hook": {{ $value.metadata.helm_sh_annotations.helm_sh_hook }}
 {{- end }}
-{{- if $value.metadata.annotations "helm.sh/hook-delete-policy" }}
-  "helm.sh/hook-delete-policy": {{ $value.metadata.annotations "helm.sh/hook-delete-policy" }}
+{{- if $value.metadata.helm_sh_annotations.helm_sh_hook_weight }}
+    "helm.sh/hook-weight": {{ $value.metadata.helm_sh_annotations.helm_sh_hook_weight }}
+{{- end }}
+{{- if $value.metadata.helm_sh_annotations.helm_sh_hook_delete_policy }}
+    "helm.sh/hook-delete-policy": {{ $value.metadata.helm_sh_annotations.helm_sh_hook_delete_policy }}
+{{- end }}
 {{- end }}
 {{- end }}
 spec:
