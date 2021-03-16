@@ -329,7 +329,7 @@ metadata:
     "helm.sh/hook": {{ $value.metadata.helm_sh_annotations.helm_sh_hook }}
 {{- end }}
 {{- if $value.metadata.helm_sh_annotations.helm_sh_hook_weight }}
-    "helm.sh/hook-weight": {{ $value.metadata.helm_sh_annotations.helm_sh_hook_weight }}
+    "helm.sh/hook-weight": {{ $value.metadata.helm_sh_annotations.helm_sh_hook_weight | quote }}
 {{- end }}
 {{- if $value.metadata.helm_sh_annotations.helm_sh_hook_delete_policy }}
     "helm.sh/hook-delete-policy": {{ $value.metadata.helm_sh_annotations.helm_sh_hook_delete_policy }}
