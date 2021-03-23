@@ -139,6 +139,11 @@ defaultMode: {{ .defaultMode }}
 {{- include "kubernetes.core.probe" .readinessProbe | nindent 4 }}
 {{- end }}
 
+{{- if .livenessProbe }}
+  livenessProbe:
+{{- include "kubernetes.core.probe" .livenessProbe | nindent 4 }}
+{{- end }}
+
 {{- if .resources }}
   resources:
 {{- include "kubernetes.core.resourcerequirements" .resources | nindent 4 }}
