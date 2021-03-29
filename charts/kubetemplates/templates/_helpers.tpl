@@ -90,17 +90,21 @@ optional: {{ .optional }}
 {{- end -}}
 
 {{- define "kubernetes.core.envfromsource" -}}
-- 
 {{- if .configMapRef -}}
-  configMapRef:
+- configMapRef:
 {{- include "kubernetes.core.configmapenvsource" .configMapRef | nindent 4 }}
-{{- end }}
-{{- if .optional }}
-  optional: {{ .optional }}
-{{- end }}
 {{- if .secretRef -}}
   secretRef:
 {{- include "kubernetes.core.secretenvsource" .secretRef | nindent 4 }}
+{{- end }}
+{{- else }}
+{{- if .secretRef -}}
+- secretRef:
+{{- include "kubernetes.core.secretenvsource" .secretRef | nindent 4 }}
+{{- end }}
+{{- end }}
+{{- if .optional }}
+optional: {{ .optional }}
 {{- end }}
 {{- end -}}
 
