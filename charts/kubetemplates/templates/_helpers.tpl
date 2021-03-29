@@ -120,6 +120,12 @@ defaultMode: {{ .defaultMode }}
     - {{ . | quote }}
 {{- end }}
 {{- end }} 
+{{- if .envFrom }}
+  envFrom:
+{{- range $key, $value := .envFrom }}
+{{- include "kubernetes.core.envvarsource" $value | nindent 4 }}
+{{- end }}
+{{- end }}
 {{- if .env }}
   env:
 {{- range $key, $value := .env }}
