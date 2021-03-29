@@ -90,7 +90,7 @@ optional: {{ .optional }}
 {{- end -}}
 
 {{- define "kubernetes.core.envfromsource" -}}
-{{- if .configMapRef -}}
+- {{- if .configMapRef -}}
 configMapRef:
 {{- include "kubernetes.core.configmapenvsource" .configMapRef | nindent 4 }}
 {{- end }}
