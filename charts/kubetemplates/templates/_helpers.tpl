@@ -75,6 +75,35 @@ configMapKeyRef:
 {{- end }}
 {{- end -}}
 
+{{- define "kubernetes.core.configmapenvsource" -}}
+name: {{ .name }}
+{{- if .optional }}
+optional: {{ .optional }}
+{{- end }}
+{{- end -}}
+
+{{- define "kubernetes.core.secretenvsource" -}}
+name: {{ .name }}
+{{- if .optional }}
+optional: {{ .optional }}
+{{- end }}
+{{- end -}}
+
+{{- define "kubernetes.core.envfromsource" -}}
+{{- if .configMapRef -}}
+configMapRef:
+{{- include "kubernetes.core.configmapenvsource" .configMapRef | nindent 4 }}
+{{- end }}
+{{- if .optional }}
+optional: {{ .optional }}
+{{- end }}
+{{- if .secretRef -}}
+secretRef:
+{{- include "kubernetes.core.secretenvsource" .secretRef | nindent 4 }}
+{{- end }}
+{{- end -}}
+
+
 {{- define "kubernetes.core.secretvolumesource" -}}
 secretName: {{ .secretName }}
 {{- if .optional }}
@@ -123,7 +152,7 @@ defaultMode: {{ .defaultMode }}
 {{- if .envFrom }}
   envFrom:
 {{- range $key, $value := .envFrom }}
-{{- include "kubernetes.core.envvarsource" $value | nindent 4 }}
+{{- include "kubernetes.core.envfromsource" $value | nindent 4 }}
 {{- end }}
 {{- end }}
 {{- if .env }}
