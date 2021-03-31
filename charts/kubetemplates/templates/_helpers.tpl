@@ -255,7 +255,7 @@ spec:
 {{- if .activeDeadlineSeconds }}
 activeDeadlineSeconds: {{ .activeDeadlineSeconds }}
 {{- end }}
-backoffLimit: {{ if kindIs "int" .backoffLimit }}{{ .backoffLimit }}{{ else }}6{{ end }}
+backoffLimit: {{ if kindIs "float64" .backoffLimit }}{{ .backoffLimit }}{{ else }}6{{ end }}
 {{- if .parallelism }}
 parallelism: {{ .parallelism }}
 {{- end }}
