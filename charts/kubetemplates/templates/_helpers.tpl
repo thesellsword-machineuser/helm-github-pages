@@ -33,8 +33,9 @@ httpGet:
 {{- end }}
 initialDelaySeconds: {{ .initialDelaySeconds | default 1 }}
 periodSeconds: {{ .periodSeconds | default 1 }}
-successThreshold: {{ .successThreshold | default 1 }}
 timeoutSeconds: {{ .timeoutSeconds | default 1 }}
+successThreshold: {{ .successThreshold | default 1 }}
+failureThreshold: {{ .failureThreshold | default 3 }}
 {{- end -}}
 
 {{- define "kubernetes.core.secretkeyselector" -}}
@@ -181,6 +182,12 @@ defaultMode: {{ .defaultMode }}
 {{- if .livenessProbe }}
   livenessProbe:
 {{- include "kubernetes.core.probe" .livenessProbe | nindent 4 }}
+{{- end }}
+
+
+{{- if .startupProbe }}
+  startupProbe:
+{{- include "kubernetes.core.probe" .startupProbe | nindent 4 }}
 {{- end }}
 
 {{- if .resources }}
