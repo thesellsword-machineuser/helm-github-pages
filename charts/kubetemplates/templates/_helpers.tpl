@@ -324,6 +324,7 @@ spec:
         paths:
 {{- range $key, $value1 := $value.http.paths }}
           - path: {{ $value1.path }}
+            pathType: {{ $value1.pathType | default "Prefix" }}
             backend:
               serviceName: {{ $value1.backend.serviceName }} 
               servicePort: {{ $value1.backend.servicePort }}
