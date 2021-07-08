@@ -323,11 +323,13 @@ spec:
       http:
         paths:
 {{- range $key, $value1 := $value.http.paths }}
-          - path: {{ $value1.path }}
-            pathType: {{ $value1.pathType | default "Prefix" }}
-            backend:
+          - backend:
               serviceName: {{ $value1.backend.serviceName }} 
               servicePort: {{ $value1.backend.servicePort }}
+            {{- if $value1.path }}
+            path: {{ $value1.path }}
+            {{- end }}
+            pathType: {{ $value1.pathType | default "ImplementationSpecific" }}
 {{- end }}
 {{- end }}
 {{- end }}
