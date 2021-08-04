@@ -1,3 +1,27 @@
+{{- define "kubernetes.core.handler" }}
+{{- if .exec }}
+exec:
+{{- include "kubernetes.core.execaction" .exec | nindent 2 }}
+{{- end }}
+{{- if .httpGet }}
+httpGet:
+{{- include "kubernetes.core.httpgetaction" .httpGet | nindent 2 }}
+{{- end }}
+{{- if .tcpSocket }}
+tcpSocket:
+{{- include "kubernetes.core.tcpsocketaction" .tcpsocket | nindent 2 }}
+{{- end }}
+{{- end -}}
+
+{{- define "kubernetes.core.lifecycle" }}
+{{- if .postStart }}
+{{- include "kubernetes.core.handler" .postStart | nindent 2 }}
+{{- end }}
+{{- if .preStop }}
+{{- include "kubernetes.core.handler" .preStop | nindent 2 }}
+{{- end }}
+{{- end -}}
+
 {{- define "kubernetes.core.containerport" -}}
 - name: {{ .name }}
   protocol: {{ .protocol | default "TCP" }}
@@ -18,6 +42,14 @@ limits:
   memory: {{ .limits.memory | default "1024Mi" }}
   cpu: {{ .limits.cpu | default "1000m" }}
 {{- end }}
+{{- end -}}
+
+{{- define "kubernetes.core.tcpsocketaction" -}}
+port: {{ .port }}
+{{- end -}}
+
+{{- define "kubernetes.core.execaction" -}}
+command: {{ .command }}
 {{- end -}}
 
 {{- define "kubernetes.core.httpgetaction" -}}
@@ -165,6 +197,11 @@ defaultMode: {{ .defaultMode }}
 {{- range $key, $value := .env }}
 {{- include "kubernetes.core.envvar" $value | nindent 4 }}
 {{- end }}
+{{- end }}
+
+{{- if .lifecycle }}
+  lifecycle:
+{{- include "kubernetes.core.lifecycle" .lifecycle | nindent 4}}
 {{- end }}
 
 {{- if .ports }}
