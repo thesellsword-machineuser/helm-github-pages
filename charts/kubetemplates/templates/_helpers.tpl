@@ -15,9 +15,11 @@ tcpSocket:
 
 {{- define "kubernetes.core.lifecycle" }}
 {{- if .postStart }}
+postStart:
 {{- include "kubernetes.core.handler" .postStart | nindent 2 }}
 {{- end }}
 {{- if .preStop }}
+preStop:
 {{- include "kubernetes.core.handler" .preStop | nindent 2 }}
 {{- end }}
 {{- end -}}
