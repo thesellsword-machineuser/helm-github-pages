@@ -505,6 +505,9 @@ spec:
         app.kubernetes.io/name: {{ default $.Chart.Name $value.metadata.name | trunc 63 | trimSuffix "-" }}
         app.kubernetes.io/instance: {{ $.Release.Name }}
     spec:
+{{- if $value.terminationGracePeriodSeconds }}
+      terminationGracePeriodSeconds: {{ $value.terminationGracePeriodSeconds }}
+{{- end }}
 {{- if $value.initContainers }}
       initContainers:
 {{ range $key, $value1 := $value.initContainers }}
