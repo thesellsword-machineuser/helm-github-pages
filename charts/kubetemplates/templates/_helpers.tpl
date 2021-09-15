@@ -143,6 +143,20 @@ optional: {{ .optional }}
 {{- end }}
 {{- end -}}
 
+{{- define "kubernetes.core.configmapvolumesource" -}}
+name: {{ .name }}
+{{- if .optional }}
+optional: {{ .optional }}
+{{- end }}
+{{- if .defaultMode }}
+defaultMode: {{ .defaultMode }}
+{{- end }}
+{{- if .items }}
+items: {{ .items }}
+{{- end }}
+{{- end -}}
+
+
 {{- define "kubernetes.core.secretvolumesource" -}}
 secretName: {{ .secretName }}
 {{- if .optional }}
@@ -151,6 +165,9 @@ optional: {{ .optional }}
 {{- if .defaultMode }}
 defaultMode: {{ .defaultMode }}
 {{- end }}
+{{- if .items }}
+items: {{ .items }}
+{{- end }}
 {{- end -}}
 
 {{- define "kubernetes.core.volume" -}}
@@ -158,6 +175,10 @@ defaultMode: {{ .defaultMode }}
 {{- if .secret }}
   secret:
 {{- include "kubernetes.core.secretvolumesource" .secret | nindent 4 }}
+{{- end }}
+{{- if .configMap }}
+  configMap:
+{{- include "kubernetes.core.configmapvolumesource" .configMap | nindent 4 }}
 {{- end }}
 {{- end -}}
 
@@ -263,15 +284,11 @@ defaultMode: {{ .defaultMode }}
   targetPort: {{ .targetPort }}
 {{- end -}}
 
-{{- define "kubernetes.apps.rollingupdatedeployment" -}}
-maxSurge: {{ .maxSurge }}
-maxUnavailable: {{ .maxUnavailable }}
-{{- end -}}
-
 {{- define "kubernetes.apps.deploymentstrategy" -}}
-{{- if .rollingupdatedeployment }}
+{{- if .rollingUpdate }}
 rollingUpdate:
-{{- include "kubernetes.apps.rollingupdatedeployment" .rollingUpdateDeployment | nindent 2 }}
+  maxSurge: {{ default "25%" .rollingUpdate.maxSurge }}
+  maxUnavailable: {{ default "25%" .rollingUpdate.maxUnavailable }}
 {{- end -}}
 type: {{ default "RollingUpdate" .type }}
 {{- end -}}
@@ -500,7 +517,7 @@ spec:
       app.kubernetes.io/name: {{ default $.Chart.Name $value.metadata.name | trunc 63 | trimSuffix "-" }}
       app.kubernetes.io/instance: {{ $.Release.Name }}
   strategy:
-{{- include "kubernetes.apps.deploymentstrategy" $value.strategy | nindent 4 }}
+{{- include "kubernetes.apps.deploymentstrategy" $value.deploymentStrategy | nindent 4 }}
   template:
     metadata:
       labels:
