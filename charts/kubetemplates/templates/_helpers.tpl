@@ -511,7 +511,7 @@ metadata:
     app.kubernetes.io/instance: {{ $.Release.Name }}
     app.kubernetes.io/managed-by: {{ $.Release.Service }}
 spec:
-  replicas: {{ $value.replicaCount | default 1 }}
+  replicas: {{ $value.replicaCount }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ default $.Chart.Name $value.metadata.name | trunc 63 | trimSuffix "-" }}
