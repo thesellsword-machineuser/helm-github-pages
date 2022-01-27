@@ -202,13 +202,13 @@ items: {{ .items }}
   imagePullPolicy: {{ .image.pullPolicy | default "Always" }}
 {{- if .image.command }}
   command: {{ .image.command }}
-{{- end }} 
+{{- end }}
 {{- if .image.args }}
   args:
 {{- range .image.args }}
     - {{ . | quote }}
 {{- end }}
-{{- end }} 
+{{- end }}
 {{- if .envFrom }}
   envFrom:
 {{- range $key, $value := .envFrom }}
@@ -341,7 +341,7 @@ schedule: {{ .schedule | quote }}
 startingDeadlineSeconds: {{ default 60 .startingDeadlineSeconds }}
 successfulJobsHistoryLimit: {{ default 0 .successfulJobsHistoryLimit }}
 suspend: {{ default false .suspend }}
-jobTemplate: 
+jobTemplate:
 {{- include "kubernetes.batch.jobtemplatespec" .jobTemplate | nindent 2 }}
 {{- end -}}
 
@@ -380,7 +380,7 @@ spec:
         paths:
 {{- range $key, $value1 := $value.http.paths }}
           - backend:
-              serviceName: {{ $value1.backend.serviceName }} 
+              serviceName: {{ $value1.backend.serviceName }}
               servicePort: {{ $value1.backend.servicePort }}
             {{- if $value1.path }}
             path: {{ $value1.path }}
@@ -498,6 +498,27 @@ spec:
 {{- end }}
 {{- end -}}
 
+{{- define "kubernetes.apps.configmap" -}}
+{{- range $key, $value := .Values.configmaps }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ default $.Chart.Name $value.metadata.name | trunc 63 | trimSuffix "-" }}
+  labels:
+    app.kubernetes.io/name: {{ default $.Chart.Name $value.metadata.name | trunc 63 | trimSuffix "-" }}
+    helm.sh/chart: {{ printf "%s-%s" $.Chart.Name $.Chart.Version | replace "+" "_" | trunc 65 | trimSuffix "-" }}
+    app.kubernetes.io/instance: {{ $.Release.Name }}
+    app.kubernetes.io/managed-by: {{ $.Release.Service }}
+data:
+{{- range $key1, $value1 := $value.data }}
+{{- range $key2, $value2 := $value1 }}
+  {{ $value2.name }}: {{ $value2.value }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end -}}
+
 {{- define "kubernetes.apps.deployment" -}}
 {{- range $key, $value := .Values.deployments }}
 ---
@@ -534,7 +555,7 @@ spec:
 {{- end }}
 {{- end }}
       containers:
-{{ range $key, $value1 := $value.containers }}
+{{- range $key, $value1 := $value.containers }}
 {{- include "kubernetes.core.container" $value1 | nindent 8 }}
 {{- end }}
 {{- if $value.volumes }}

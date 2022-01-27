@@ -1,0 +1,84 @@
+common: &common
+  envFrom:
+    sample-app-env:
+      configMapRef:
+        name: sample-app-env
+    sample-app-env-overrides:
+      configMapRef:
+        name: sample-app-env-overrides
+
+configmaps:
+  sample-app-env:
+    metadata:
+      name: sample-app-env
+    data:
+      - KEY1:
+          name: KEY1
+          value: VALUE1
+      - KEY2:
+          name: KEY2
+          value: VALUE2
+      - KEY3:
+          name: KEY3
+          value: VALUE3
+
+deployments:
+  sample-app:
+    metadata:
+      name: sample-app
+    replicaCount: 3
+    deploymentStrategy:
+      type: RollingUpdate
+    restartPolicy: Always
+    containers:
+      sample-app:
+        <<: *common
+        name: sample-app
+        image:
+          repository: sample-app
+          tag: latest
+          pullPolicy: Always
+        ports:
+          https:
+            name: https
+            protocol: TCP
+            containerPort: "3000"
+        resources:
+          requests:
+            cpu: "1"
+            memory: 2048Mi
+          limits:
+            cpu: "1"
+            memory: 4096Mi
+
+ingress:
+  enabled: false
+  metadata:
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt
+      acme.cert-manager.io/http01-edit-in-place: "true"
+  tls:
+    - hosts:
+      - 'sample-app.example.com'
+      secretName: ingress-tls-secret
+  rules:
+    - host: 'sample-app.example.com'
+      http:
+        paths:
+          - path:
+            backend:
+              serviceName: sample-app
+              servicePort: 443
+
+services:
+  sample-app:
+    selector:
+      name: sample-app
+    metadata:
+      name: sample-app
+    ports:
+      - name: http
+        port: "80"
+        protocol: TCP
+        targetPort: "3000"
+

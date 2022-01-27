@@ -2,3 +2,5 @@
 *.swp
 
 charts/target
+charts/test/target
+charts/test/sample-app/charts

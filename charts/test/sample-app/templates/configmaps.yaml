@@ -1,0 +1,1 @@
+{{- template "kubernetes.apps.configmap" . }}
