@@ -518,7 +518,7 @@ metadata:
     app.kubernetes.io/instance: {{ $.Release.Name }}
     app.kubernetes.io/managed-by: {{ $.Release.Service }}
 {{- if $value.metadata }}
-{{- include "kubetemplates.annotations" $value.metadata | nindent 4 }}
+{{- include "kubetemplates.annotations" $value.metadata | nindent 2 }}
 {{- end }}
 data:
 {{- range $key1, $value1 := $value.data }}
