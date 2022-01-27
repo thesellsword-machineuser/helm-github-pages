@@ -1,3 +1,24 @@
+{{- define "kubetemplates.annotations" }}
+{{- if or (.annotations) (.helm_sh_annotations) }}
+annotations:
+{{- if .annotations }}
+{{- toYaml .annotations | nindent 2 }}
+{{- end }}
+{{- if .helm_sh_annotations }}
+{{- if .helm_sh_annotations.helm_sh_hook }}
+  "helm.sh/hook": {{ .helm_sh_annotations.helm_sh_hook }}
+{{- end }}
+{{- if .helm_sh_annotations.helm_sh_hook_weight }}
+  "helm.sh/hook-weight": {{ .helm_sh_annotations.helm_sh_hook_weight | quote }}
+{{- end }}
+{{- if .helm_sh_annotations.helm_sh_hook_delete_policy }}
+  "helm.sh/hook-delete-policy": {{ .helm_sh_annotations.helm_sh_hook_delete_policy }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end -}}
+
+
 {{- define "kubernetes.core.handler" }}
 {{- if .exec }}
 exec:
@@ -317,7 +338,7 @@ spec:
 {{- define "kubernetes.batch.jobspec" -}}
 {{- if .activeDeadlineSeconds }}
 activeDeadlineSeconds: {{ .activeDeadlineSeconds }}
-{{- end }}
+{{- end -}}
 backoffLimit: {{ if kindIs "float64" .backoffLimit }}{{ .backoffLimit }}{{ else }}6{{ end }}
 {{- if .parallelism }}
 parallelism: {{ .parallelism }}
@@ -427,22 +448,8 @@ metadata:
     helm.sh/chart: {{ printf "%s-%s" $.Chart.Name $.Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
     app.kubernetes.io/instance: {{ $.Release.Name }}
     app.kubernetes.io/managed-by: {{ $.Release.Service }}
-{{- if or ($value.metadata.annotations) ($value.metadata.helm_sh_annotations) }}
-  annotations:
-{{- if $value.metadata.annotations }}
-{{ toYaml $value.metadata.annotations | nindent 4 }}
-{{- end }}
-{{- if $value.metadata.helm_sh_annotations }}
-{{- if $value.metadata.helm_sh_annotations.helm_sh_hook }}
-    "helm.sh/hook": {{ $value.metadata.helm_sh_annotations.helm_sh_hook }}
-{{- end }}
-{{- if $value.metadata.helm_sh_annotations.helm_sh_hook_weight }}
-    "helm.sh/hook-weight": {{ $value.metadata.helm_sh_annotations.helm_sh_hook_weight | quote }}
-{{- end }}
-{{- if $value.metadata.helm_sh_annotations.helm_sh_hook_delete_policy }}
-    "helm.sh/hook-delete-policy": {{ $value.metadata.helm_sh_annotations.helm_sh_hook_delete_policy }}
-{{- end }}
-{{- end }}
+{{- if $value.metadata }}
+{{- include "kubetemplates.annotations" $value.metadata | nindent 2 }}
 {{- end }}
 spec:
 {{- include "kubernetes.batch.jobspec" .spec | nindent 2 }}
@@ -510,6 +517,9 @@ metadata:
     helm.sh/chart: {{ printf "%s-%s" $.Chart.Name $.Chart.Version | replace "+" "_" | trunc 65 | trimSuffix "-" }}
     app.kubernetes.io/instance: {{ $.Release.Name }}
     app.kubernetes.io/managed-by: {{ $.Release.Service }}
+{{- if $value.metadata }}
+{{- include "kubetemplates.annotations" $value.metadata | nindent 4 }}
+{{- end }}
 data:
 {{- range $key1, $value1 := $value.data }}
 {{- range $key2, $value2 := $value1 }}

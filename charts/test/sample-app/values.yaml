@@ -3,14 +3,15 @@ common: &common
     sample-app-env:
       configMapRef:
         name: sample-app-env
-    sample-app-env-overrides:
-      configMapRef:
-        name: sample-app-env-overrides
 
 configmaps:
   sample-app-env:
     metadata:
       name: sample-app-env
+      helm_sh_annotations:
+        helm_sh_hook: pre-install
+        helm_sh_hook_weight: "-1"
+        helm_sh_hook_delete_policy: before-hook-creation
     data:
       - KEY1:
           name: KEY1
@@ -21,6 +22,44 @@ configmaps:
       - KEY3:
           name: KEY3
           value: VALUE3
+
+jobs:
+  sample-app-job:
+    metadata:
+      name: sample-app-job
+      annotations:
+        key1: value1
+        key2: value2
+      helm_sh_annotations:
+        helm_sh_hook: pre-install
+        helm_sh_hook_weight: "0"
+        helm_sh_hook_delete_policy: before-hook-creation
+    spec:
+      parallelism: 1
+      completions: 1
+      backoffLimit: 0
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+            sample-app-job:
+              <<: *common
+              name: sample-app-job
+              image:
+                repository: sample-app
+                tag: latest
+                pullPolicy: Always
+                command: ["/bin/sh"]
+                args:
+                  - "-c"
+                  - "echo \"Hello World\""
+              resources:
+                requests:
+                  cpu: "1"
+                  memory: 1024Mi
+                limits:
+                  cpu: "1"
+                  memory: 1024Mi
 
 deployments:
   sample-app:
