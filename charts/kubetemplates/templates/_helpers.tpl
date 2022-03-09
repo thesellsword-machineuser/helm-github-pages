@@ -109,6 +109,10 @@ optional: {{ .optional }}
 {{- end }}
 {{- end -}}
 
+{{- define "kubernetes.core.fieldrefkeyselector" -}}
+fieldPath: {{ .fieldPath }}
+{{- end -}}
+
 {{- define "kubernetes.core.envvarsource" -}}
 {{- if .secretKeyRef -}}
 secretKeyRef:
@@ -117,6 +121,10 @@ secretKeyRef:
 {{- if .configMapKeyRef -}}
 configMapKeyRef:
 {{- include "kubernetes.core.configmapkeyselector" .configMapKeyRef | nindent 4 }}
+{{- end }}
+{{- if .fieldRef -}}
+fieldRef:
+{{- include "kubernetes.core.fieldrefkeyselector" .fieldRef | nindent 4 }}
 {{- end }}
 {{- end -}}
 
