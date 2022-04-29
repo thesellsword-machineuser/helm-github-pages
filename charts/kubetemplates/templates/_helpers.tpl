@@ -374,6 +374,11 @@ jobTemplate:
 {{- include "kubernetes.batch.jobtemplatespec" .jobTemplate | nindent 2 }}
 {{- end -}}
 
+{{/*
+kubernetes resource definitions start here
+*/}}
+
+
 {{- define "kubernetes.extensions.ingress" -}}
 {{- if .Values.ingress.enabled -}}
 {{- $ingressPaths := .Values.ingress.paths -}}
@@ -387,9 +392,11 @@ metadata:
     helm.sh/chart: {{ printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
-{{- if .Values.ingress.metadata.annotations }}
-  annotations:
-{{ toYaml .Values.ingress.metadata.annotations | nindent 4 }}
+{{- if .Values.ingress.metadata.labels }}
+{{- toYaml .Values.ingress.metadata.labels | nindent 4 }}
+{{- end }}
+{{- if .Values.ingress.metadata }}
+{{- include "kubetemplates.annotations" .Values.ingress.metadata | nindent 2 }}
 {{- end }}
 spec:
 {{- if .Values.ingress.tls }}
@@ -432,6 +439,12 @@ metadata:
     helm.sh/chart: {{ printf "%s-%s" $.Chart.Name $.Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
     app.kubernetes.io/instance: {{ $.Release.Name }}
     app.kubernetes.io/managed-by: {{ $.Release.Service }}
+{{- if $value.metadata.labels }}
+{{- toYaml $value.metadata.labels | nindent 4 }}
+{{- end }}
+{{- if $value.metadata }}
+{{- include "kubetemplates.annotations" $value.metadata | nindent 2 }}
+{{- end }}
 type: Opaque
 data:
 {{- range $key, $value1 := $value.data -}}
@@ -456,6 +469,9 @@ metadata:
     helm.sh/chart: {{ printf "%s-%s" $.Chart.Name $.Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
     app.kubernetes.io/instance: {{ $.Release.Name }}
     app.kubernetes.io/managed-by: {{ $.Release.Service }}
+{{- if $value.metadata.labels }}
+{{- toYaml $value.metadata.labels | nindent 4 }}
+{{- end }}
 {{- if $value.metadata }}
 {{- include "kubetemplates.annotations" $value.metadata | nindent 2 }}
 {{- end }}
@@ -477,6 +493,12 @@ metadata:
     helm.sh/chart: {{ printf "%s-%s" $.Chart.Name $.Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
     app.kubernetes.io/instance: {{ $.Release.Name }}
     app.kubernetes.io/managed-by: {{ $.Release.Service }}
+{{- if $value.metadata.labels }}
+{{- toYaml $value.metadata.labels | nindent 4 }}
+{{- end }}
+{{- if $value.metadata }}
+{{- include "kubetemplates.annotations" $value.metadata | nindent 2 }}
+{{- end }}
 spec:
 {{- include "kubernetes.batch.cronjobspec" $value.spec | nindent 2 }}
 {{- end }}
@@ -495,9 +517,11 @@ metadata:
     helm.sh/chart: {{ printf "%s-%s" $.Chart.Name $.Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
     app.kubernetes.io/instance: {{ $.Release.Name }}
     app.kubernetes.io/managed-by: {{ $.Release.Service }}
-{{- if $value.metadata.annotations }}
-  annotations:
-{{ toYaml $value.metadata.annotations | nindent 4 }}
+{{- if $value.metadata.labels }}
+{{- toYaml $value.metadata.labels | nindent 4 }}
+{{- end }}
+{{- if $value.metadata }}
+{{- include "kubetemplates.annotations" $value.metadata | nindent 2 }}
 {{- end }}
 spec:
   type: {{ default "ClusterIP" $value.type }}
@@ -525,6 +549,9 @@ metadata:
     helm.sh/chart: {{ printf "%s-%s" $.Chart.Name $.Chart.Version | replace "+" "_" | trunc 65 | trimSuffix "-" }}
     app.kubernetes.io/instance: {{ $.Release.Name }}
     app.kubernetes.io/managed-by: {{ $.Release.Service }}
+{{- if $value.metadata.labels }}
+{{- toYaml $value.metadata.labels | nindent 4 }}
+{{- end }}
 {{- if $value.metadata }}
 {{- include "kubetemplates.annotations" $value.metadata | nindent 2 }}
 {{- end }}
@@ -551,6 +578,9 @@ metadata:
     app.kubernetes.io/managed-by: {{ $.Release.Service }}
 {{- if $value.metadata.labels }}
 {{- toYaml $value.metadata.labels | nindent 4 }}
+{{- end }}
+{{- if $value.metadata }}
+{{- include "kubetemplates.annotations" $value.metadata | nindent 2 }}
 {{- end }}
 spec:
   replicas: {{ $value.replicaCount }}

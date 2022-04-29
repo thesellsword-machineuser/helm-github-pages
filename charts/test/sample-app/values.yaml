@@ -67,6 +67,9 @@ deployments:
       name: sample-app
       labels:
         key: value
+      annotations:
+        prefix.svc.com/annotation1: 'true'
+        prefix.svc.com/annotation2: 'false'
     replicaCount: 3
     deploymentStrategy:
       type: RollingUpdate
@@ -93,7 +96,7 @@ deployments:
             memory: 4096Mi
 
 ingress:
-  enabled: false
+  enabled: true
   metadata:
     annotations:
       cert-manager.io/cluster-issuer: letsencrypt
