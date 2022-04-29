@@ -549,6 +549,9 @@ metadata:
     helm.sh/chart: {{ printf "%s-%s" $.Chart.Name $.Chart.Version | replace "+" "_" | trunc 65 | trimSuffix "-" }}
     app.kubernetes.io/instance: {{ $.Release.Name }}
     app.kubernetes.io/managed-by: {{ $.Release.Service }}
+{{- if $value.metadata.labels }}
+{{- toYaml $value.metadata.labels | nindent 4 }}
+{{- end }}
 spec:
   replicas: {{ $value.replicaCount }}
   selector:
@@ -562,6 +565,9 @@ spec:
       labels:
         app.kubernetes.io/name: {{ default $.Chart.Name $value.metadata.name | trunc 63 | trimSuffix "-" }}
         app.kubernetes.io/instance: {{ $.Release.Name }}
+{{- if $value.metadata.labels }}
+{{- toYaml $value.metadata.labels | nindent 8 }}
+{{- end }}
     spec:
 {{- if $value.terminationGracePeriodSeconds }}
       terminationGracePeriodSeconds: {{ $value.terminationGracePeriodSeconds }}
