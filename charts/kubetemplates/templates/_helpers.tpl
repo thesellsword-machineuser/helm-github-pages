@@ -525,15 +525,20 @@ metadata:
 {{- end }}
 spec:
   type: {{ default "ClusterIP" $value.type }}
+{{- if $value.externalName }}
+  externalName: {{ $value.externalName }}
+{{- end }}
 {{- if $value.ports }}
   ports:
 {{- range $key, $value1 := $value.ports }}
 {{- include "kubernetes.core.serviceport" $value1 | nindent 4 }}
 {{- end }}
 {{- end }}
+{{- if $value.selector }}
   selector:
     app.kubernetes.io/name: {{ default $.Chart.Name $value.selector.name | trunc 63 | trimSuffix "-" }}
     app.kubernetes.io/instance: {{ $.Release.Name }}
+{{- end }}
 {{- end }}
 {{- end -}}
 

@@ -15,13 +15,13 @@ configmaps:
     data:
       - KEY1:
           name: KEY1
-          value: VALUE1
+          value: false
       - KEY2:
           name: KEY2
-          value: VALUE2
+          value: "false"
       - KEY3:
           name: KEY3
-          value: VALUE3
+          value: '"false"'
 
 jobs:
   sample-app-job:
@@ -125,4 +125,8 @@ services:
         port: "80"
         protocol: TCP
         targetPort: "3000"
-
+  external-svc:
+    metadata:
+      name: external-svc
+    type: ExternalName
+    externalName: external.domain.com
