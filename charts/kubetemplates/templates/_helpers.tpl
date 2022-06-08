@@ -421,14 +421,14 @@ spec:
           - backend:
             {{- if $value1.backend.service }}
               service:
-                name: ${{ $value1.backend.service.name }}
-                port: ${{ $value1.backend.service.port }}
+                name: {{ $value1.backend.service.name }}
+                port: {{ $value1.backend.service.port }}
             {{- end }}
             {{- if $value1.backend.resource }}
               resource:
-                apiGroup: ${{ $value1.backend.resource.apiGroup }}
-                kind: ${{ $value1.backend.resource.kind }}
-                name: ${{ $value1.backend.resource.name }}
+                apiGroup: {{ $value1.backend.resource.apiGroup }}
+                kind: {{ $value1.backend.resource.kind }}
+                name: {{ $value1.backend.resource.name }}
             {{- end }}
             {{- if $value1.path }}
             path: {{ $value1.path }}
