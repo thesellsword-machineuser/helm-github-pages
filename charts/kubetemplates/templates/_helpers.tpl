@@ -399,6 +399,9 @@ metadata:
 {{- include "kubetemplates.annotations" .Values.ingress.metadata | nindent 2 }}
 {{- end }}
 spec:
+{{- if .Values.ingress.ingressClassName }}
+  ingressClassName: {{ .Values.ingress.ingressClassName | quote }}
+{{- end }}
 {{- if .Values.ingress.tls }}
   tls:
   {{- range .Values.ingress.tls }}
@@ -416,8 +419,17 @@ spec:
         paths:
 {{- range $key, $value1 := $value.http.paths }}
           - backend:
-              serviceName: {{ $value1.backend.serviceName }}
-              servicePort: {{ $value1.backend.servicePort }}
+            {{- if $value1.backend.service }}
+              service:
+                name: ${{ $value1.backend.service.name }}
+                port: ${{ $value1.backend.service.port }}
+            {{- end }}
+            {{- if $value1.backend.resource }}
+              resource:
+                apiGroup: ${{ $value1.backend.resource.apiGroup }}
+                kind: ${{ $value1.backend.resource.kind }}
+                name: ${{ $value1.backend.resource.name }}
+            {{- end }}
             {{- if $value1.path }}
             path: {{ $value1.path }}
             {{- end }}
