@@ -422,7 +422,13 @@ spec:
             {{- if $value1.backend.service }}
               service:
                 name: {{ $value1.backend.service.name }}
-                port: {{ $value1.backend.service.port }}
+                port:
+                {{- if $value1.backend.service.port.name }}
+                  name: {{ $value1.backend.service.port.name }}
+                {{- end }}
+                {{- if $value1.backend.service.port.number }}
+                  number: {{ $value1.backend.service.port.number }}
+                {{- end }}
             {{- end }}
             {{- if $value1.backend.resource }}
               resource:
