@@ -383,7 +383,7 @@ kubernetes resource definitions start here
 {{- if .Values.ingress.enabled -}}
 {{- $ingressPaths := .Values.ingress.paths -}}
 ---
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ default .Chart.Name .Values.ingress.metadata.name | trunc 63 | trimSuffix "-" }}
