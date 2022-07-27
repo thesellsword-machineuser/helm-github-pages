@@ -244,9 +244,25 @@ items: {{ .items }}
 {{- include "kubernetes.core.envfromsource" $value | nindent 4 }}
 {{- end }}
 {{- end }}
-{{- if .env }}
+
+{{- if or .env .envOverrideOne .envOverrideTwo }}
   env:
+{{- end }}
+
+{{- if .env }}
 {{- range $key, $value := .env }}
+{{- include "kubernetes.core.envvar" $value | nindent 4 }}
+{{- end }}
+{{- end }}
+
+{{- if .envOverrideOne }}
+{{- range $key, $value := .envOverrideOne }}
+{{- include "kubernetes.core.envvar" $value | nindent 4 }}
+{{- end }}
+{{- end }}
+
+{{- if .envOverrideTwo }}
+{{- range $key, $value := .envOverrideTwo }}
 {{- include "kubernetes.core.envvar" $value | nindent 4 }}
 {{- end }}
 {{- end }}

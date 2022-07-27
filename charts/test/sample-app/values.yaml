@@ -77,6 +77,27 @@ deployments:
     containers:
       sample-app:
         <<: *common
+        env:
+          ENV1:
+            name: ENV1
+            value: VALUE1
+          ENV2:
+            name: ENV2
+            value: VALUE2
+        envOverrideOne:
+          ENV3:
+            name: ENV3
+            value: VALUE3
+          ENV4:
+            name: ENV4
+            value: VALUE4
+        envOverrideTwo:
+          ENV5:
+            name: ENV5
+            value: VALUE5
+          ENV6:
+            name: ENV6
+            value: VALUE6
         name: sample-app
         image:
           repository: sample-app
@@ -94,6 +115,48 @@ deployments:
           limits:
             cpu: "1"
             memory: 4096Mi
+  sample-app-2:
+    metadata:
+      name: sample-app-2
+      labels:
+        key: value
+      annotations:
+        prefix.svc.com/annotation1: 'true'
+        prefix.svc.com/annotation2: 'false'
+    replicaCount: 3
+    deploymentStrategy:
+      type: RollingUpdate
+    restartPolicy: Always
+    containers:
+      sample-app-2:
+        <<: *common
+        envOverrideOne:
+          ENV1:
+            name: ENV1
+            value: VALUE1
+          ENV2:
+            name: ENV2
+            value: VALUE2
+        name: sample-app
+        image:
+          repository: sample-app
+          tag: latest
+          pullPolicy: Always
+        ports:
+          https:
+            name: https
+            protocol: TCP
+            containerPort: "3000"
+        resources:
+          requests:
+            cpu: "1"
+            memory: 2048Mi
+          limits:
+            cpu: "1"
+            memory: 4096Mi
+
+
+
 
 ingress:
   enabled: true
