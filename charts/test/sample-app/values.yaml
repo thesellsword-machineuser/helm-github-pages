@@ -70,6 +70,9 @@ deployments:
       annotations:
         prefix.svc.com/annotation1: 'true'
         prefix.svc.com/annotation2: 'false'
+    podAnnotations:
+      prefix.svc.com/annotation3: 'true'
+      prefix.svc.com/annotation4: 'false'
     replicaCount: 3
     deploymentStrategy:
       type: RollingUpdate
