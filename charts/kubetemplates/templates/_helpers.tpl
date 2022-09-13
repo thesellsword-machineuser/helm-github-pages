@@ -637,6 +637,10 @@ spec:
 {{- if $value.metadata.labels }}
 {{- toYaml $value.metadata.labels | nindent 8 }}
 {{- end }}
+{{- if $value.podAnnotations }}
+      annotations:
+{{- toYaml $value.podAnnotations | nindent 8 }}
+{{- end }}
     spec:
 {{- if $value.terminationGracePeriodSeconds }}
       terminationGracePeriodSeconds: {{ $value.terminationGracePeriodSeconds }}
