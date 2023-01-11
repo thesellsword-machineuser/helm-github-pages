@@ -663,3 +663,25 @@ spec:
 {{- end }}
 {{- end }}
 {{- end -}}
+
+
+{{- define "kubernetes.core.serviceaccount" -}}
+{{- if .Values.serviceaccount.enabled }}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ default .Chart.Name .Values.serviceaccount.metadata.name | trunc 63 | trimSuffix "-" }}
+  labels:
+    app.kubernetes.io/name: {{ default .Chart.Name .Values.serviceaccount.metadata.name | trunc 63 | trimSuffix "-" }}
+    helm.sh/chart: {{ printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- if .Values.serviceaccount.metadata.labels }}
+{{- toYaml .Values.serviceaccount.metadata.labels | nindent 4 }}
+{{- end }}
+{{- if .Values.serviceaccount.metadata }}
+{{- include "kubetemplates.annotations" .Values.serviceaccount.metadata | nindent 2 }}
+{{- end }}
+{{- end }}
+{{- end -}}

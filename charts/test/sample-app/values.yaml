@@ -159,8 +159,6 @@ deployments:
             memory: 4096Mi
 
 
-
-
 ingress:
   enabled: true
   metadata:
@@ -169,7 +167,7 @@ ingress:
       acme.cert-manager.io/http01-edit-in-place: "true"
   tls:
     - hosts:
-      - 'sample-app.example.com'
+        - 'sample-app.example.com'
       secretName: ingress-tls-secret
   rules:
     - host: 'sample-app.example.com'
@@ -196,3 +194,8 @@ services:
       name: external-svc
     type: ExternalName
     externalName: external.domain.com
+
+serviceaccount:
+  enabled: true
+  metadata:
+    name: sample-app
