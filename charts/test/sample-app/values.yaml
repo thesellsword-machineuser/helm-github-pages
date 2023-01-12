@@ -77,6 +77,7 @@ deployments:
     deploymentStrategy:
       type: RollingUpdate
     restartPolicy: Always
+    serviceAccountName: svc-acct-name
     containers:
       sample-app:
         <<: *common
@@ -199,3 +200,5 @@ serviceaccount:
   enabled: true
   metadata:
     name: sample-app
+    annotations:
+      eks.amazonaws.com/role-arn: <sample_role_arn>

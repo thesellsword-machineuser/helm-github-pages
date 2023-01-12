@@ -338,8 +338,12 @@ rollingUpdate:
 type: {{ default "RollingUpdate" .type }}
 {{- end -}}
 
+
 {{- define "kubernetes.core.podspec" -}}
 restartPolicy: {{ default "Never" .restartPolicy }}
+{{- if .serviceAccountName }}
+serviceAccountName: {{ .serviceAccountName }}
+{{- end }}
 containers:
 {{- range $key, $value := .containers }}
 {{- include "kubernetes.core.container" $value | nindent 2 }}
@@ -644,6 +648,10 @@ spec:
     spec:
 {{- if $value.terminationGracePeriodSeconds }}
       terminationGracePeriodSeconds: {{ $value.terminationGracePeriodSeconds }}
+{{- end }}
+      restartPolicy: {{ default "Always" .restartPolicy }}
+{{- if $value.serviceAccountName }}
+      serviceAccountName: {{ $value.serviceAccountName }}
 {{- end }}
 {{- if $value.initContainers }}
       initContainers:
