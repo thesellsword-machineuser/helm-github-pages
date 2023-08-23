@@ -69,6 +69,9 @@ limits:
 
 {{- define "kubernetes.core.tcpsocketaction" -}}
 port: {{ .port }}
+{{- if .host -}}
+host: {{ .host }}
+{{- end }}
 {{- end -}}
 
 {{- define "kubernetes.core.execaction" -}}
@@ -85,6 +88,14 @@ scheme: {{ .scheme | default "http" }}
 {{- if .httpGet -}}
 httpGet:
 {{- include "kubernetes.core.httpgetaction" .httpGet | nindent 2 }}
+{{- end }}
+{{- if .exec -}}
+exec:
+{{- include "kubernetes.core.execaction" .exec | nindent 2 }}
+{{- end }}
+{{- if .tcpSocket -}}
+tcpSocket:
+{{- include "kubernetes.core.tcpsocketaction" .tcpSocket | nindent 2 }}
 {{- end }}
 initialDelaySeconds: {{ .initialDelaySeconds | default 1 }}
 periodSeconds: {{ .periodSeconds | default 1 }}

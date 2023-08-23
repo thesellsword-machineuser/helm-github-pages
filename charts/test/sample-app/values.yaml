@@ -112,6 +112,26 @@ deployments:
             name: https
             protocol: TCP
             containerPort: "3000"
+        readinessProbe:
+          httpGet:
+            path: /upcheck
+            port: 3000
+            scheme: HTTP
+          periodSeconds: 30
+          # give enough time for the system
+          # to load the model and initialize
+          initialDelaySeconds: 10
+          failureThreshold: 1
+        livenessProbe:
+          httpGet:
+            path: /upcheck
+            port: 3000
+            scheme: HTTP
+          periodSeconds: 30
+          # give enough time for the system
+          # to load the model and initialize
+          initialDelaySeconds: 10
+          failureThreshold: 5
         resources:
           requests:
             cpu: "1"
@@ -151,6 +171,26 @@ deployments:
             name: https
             protocol: TCP
             containerPort: "3000"
+        readinessProbe:
+          exec:
+            command:
+              - /bin/bash
+              - -c
+              - command arg1 arg2 arg3
+          periodSeconds: 60
+          # give enough time for the system
+          # to load the model and initialize
+          initialDelaySeconds: 30
+          failureThreshold: 2
+        livenessProbe:
+          tcpSocket:
+            port: 8080
+          periodSeconds: 60
+          timeoutSeconds: 10
+          # give enough time for the system
+          # to load the model and initialize
+          initialDelaySeconds: 30
+          failureThreshold: 2
         resources:
           requests:
             cpu: "1"
