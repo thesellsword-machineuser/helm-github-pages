@@ -533,7 +533,7 @@ spec:
 {{- define "kubernetes.batch.cronjob" -}}
 {{- range $key, $value := .Values.cronjobs }}
 ---
-apiVersion: batch/v1beta1
+apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: {{ default $.Chart.Name $value.metadata.name | trunc 63 | trimSuffix "-" }}
