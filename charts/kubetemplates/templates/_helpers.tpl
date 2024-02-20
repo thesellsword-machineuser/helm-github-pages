@@ -349,9 +349,28 @@ rollingUpdate:
 type: {{ default "RollingUpdate" .type }}
 {{- end -}}
 
+{{- define "kubernetes.core.toleration" -}}
+- effect: {{ .effect }}
+  key: {{ .key }}
+  operator: {{ .operator }}
+{{- if .tolerationSeconds }}
+  tolerationSeconds: {{ .tolerationSeconds }}
+{{- end }}
+  value: {{ .value }}
+{{- end -}}
 
 {{- define "kubernetes.core.podspec" -}}
+{{- if .nodeSelector }}
+nodeSelector:
+  {{ .nodeSelector | toYaml }}
+{{- end }}
 restartPolicy: {{ default "Never" .restartPolicy }}
+{{- if.tolerations }}
+tolerations:
+{{- range $key, $value := .tolerations }}
+{{- include "kubernetes.core.toleration" $value | nindent 2 }}
+{{- end }}
+{{- end }}
 {{- if .serviceAccountName }}
 serviceAccountName: {{ .serviceAccountName }}
 {{- end }}
@@ -657,6 +676,16 @@ spec:
 {{- toYaml $value.podAnnotations | nindent 8 }}
 {{- end }}
     spec:
+{{- if $value.nodeSelector }}
+      nodeSelector:
+        {{ $value.nodeSelector | toYaml }}
+{{- end -}}
+{{- if $value.tolerations }}
+      tolerations:
+{{- range $key, $value1 := $value.tolerations }}
+{{- include "kubernetes.core.toleration" $value1 | nindent 8 }}
+{{- end }}
+{{- end }}
 {{- if $value.terminationGracePeriodSeconds }}
       terminationGracePeriodSeconds: {{ $value.terminationGracePeriodSeconds }}
 {{- end }}

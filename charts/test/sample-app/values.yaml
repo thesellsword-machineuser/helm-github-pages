@@ -41,6 +41,14 @@ jobs:
       template:
         spec:
           restartPolicy: Never
+          tolerations:
+            migration-noschedule:
+              key: "karpenter"
+              operator: "Equal"
+              value: "migration"
+              effect: "NoSchedule"
+          nodeSelector:
+            karpenter_migration: "true"
           containers:
             sample-app-job:
               <<: *common
@@ -60,6 +68,43 @@ jobs:
                 limits:
                   cpu: "1"
                   memory: 1024Mi
+  sample-app-job-2:
+    metadata:
+      name: sample-app-job-2
+      annotations:
+        key1: value1
+        key2: value2
+      helm_sh_annotations:
+        helm_sh_hook: pre-install
+        helm_sh_hook_weight: "0"
+        helm_sh_hook_delete_policy: before-hook-creation
+    spec:
+      parallelism: 1
+      completions: 1
+      backoffLimit: 0
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+            sample-app-job-2:
+              <<: *common
+              name: sample-app-job
+              image:
+                repository: sample-app
+                tag: latest
+                pullPolicy: Always
+                command: ["/bin/sh"]
+                args:
+                  - "-c"
+                  - "echo \"Hello World\""
+              resources:
+                requests:
+                  cpu: "1"
+                  memory: 1024Mi
+                limits:
+                  cpu: "1"
+                  memory: 1024Mi
+
 
 deployments:
   sample-app:
@@ -151,6 +196,14 @@ deployments:
     deploymentStrategy:
       type: RollingUpdate
     restartPolicy: Always
+    tolerations:
+      migration-noschedule:
+        key: "karpenter"
+        operator: "Equal"
+        value: "migration"
+        effect: "NoSchedule"
+    nodeSelector:
+      karpenter_migration: "true"
     containers:
       sample-app-2:
         <<: *common
