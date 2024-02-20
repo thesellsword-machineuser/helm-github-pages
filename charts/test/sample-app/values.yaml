@@ -41,6 +41,14 @@ jobs:
       template:
         spec:
           restartPolicy: Never
+          tolerations:
+            migration-noschedule:
+              key: "karpenter"
+              operator: "Equal"
+              value: "migration"
+              effect: "NoSchedule"
+          nodeSelector:
+            karpenter_migration: "true"
           containers:
             sample-app-job:
               <<: *common
