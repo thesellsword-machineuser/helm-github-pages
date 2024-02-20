@@ -363,11 +363,13 @@ type: {{ default "RollingUpdate" .type }}
 {{- if .nodeSelector }}
 nodeSelector:
   {{ .nodeSelector | toYaml }}
-{{- end -}}
+{{- end }}
 restartPolicy: {{ default "Never" .restartPolicy }}
+{{- if.tolerations }}
 tolerations:
 {{- range $key, $value := .tolerations }}
 {{- include "kubernetes.core.toleration" $value | nindent 2 }}
+{{- end }}
 {{- end }}
 {{- if .serviceAccountName }}
 serviceAccountName: {{ .serviceAccountName }}
