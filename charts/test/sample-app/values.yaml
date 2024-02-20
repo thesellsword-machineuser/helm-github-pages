@@ -78,6 +78,14 @@ deployments:
       type: RollingUpdate
     restartPolicy: Always
     serviceAccountName: svc-acct-name
+    tolerations:
+      migration_noschedule:
+        key: "karpenter"
+        operator: "Equal"
+        value: "migration"
+        effect: "NoSchedule"
+    nodeSelector:
+      karpenter_migration: "true"
     containers:
       sample-app:
         <<: *common
@@ -151,6 +159,14 @@ deployments:
     deploymentStrategy:
       type: RollingUpdate
     restartPolicy: Always
+    tolerations:
+      migration_noschedule:
+        key: "karpenter"
+        operator: "Equal"
+        value: "migration"
+        effect: "NoSchedule"
+    nodeSelector:
+      karpenter_migration: "true"
     containers:
       sample-app-2:
         <<: *common
