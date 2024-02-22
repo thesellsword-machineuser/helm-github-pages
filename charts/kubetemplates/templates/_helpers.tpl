@@ -364,6 +364,14 @@ type: {{ default "RollingUpdate" .type }}
 nodeSelector:
   {{ .nodeSelector | toYaml }}
 {{- end }}
+{{- if .affinity }}
+affinity:
+  {{ .affinity | toYaml }}
+{{- end }}
+{{- if .topologySpreadConstraints }}
+topologySpreadConstraints:
+  {{ .topologySpreadConstraints | toYaml }}
+{{- end }}
 restartPolicy: {{ default "Never" .restartPolicy }}
 {{- if.tolerations }}
 tolerations:
@@ -680,6 +688,14 @@ spec:
       nodeSelector:
         {{ $value.nodeSelector | toYaml }}
 {{- end -}}
+{{- if $value.affinity }}
+affinity:
+  {{ $value.affinity | toYaml }}
+{{- end }}
+{{- if $value.topologySpreadConstraints }}
+topologySpreadConstraints:
+  {{ $value.topologySpreadConstraints | toYaml }}
+{{- end }}
 {{- if $value.tolerations }}
       tolerations:
 {{- range $key, $value1 := $value.tolerations }}
