@@ -364,6 +364,10 @@ type: {{ default "RollingUpdate" .type }}
 nodeSelector:
   {{ .nodeSelector | toYaml }}
 {{- end }}
+{{- if .affinity }}
+affinity:
+  {{ .affinity | toYaml }}
+{{- end }}
 restartPolicy: {{ default "Never" .restartPolicy }}
 {{- if.tolerations }}
 tolerations:
@@ -679,6 +683,10 @@ spec:
 {{- if $value.nodeSelector }}
       nodeSelector:
         {{ $value.nodeSelector | toYaml }}
+{{- end -}}
+{{- if $value.affinity }}
+      affinity:
+        {{ $value.affinity | toYaml }}
 {{- end -}}
 {{- if $value.tolerations }}
       tolerations:
