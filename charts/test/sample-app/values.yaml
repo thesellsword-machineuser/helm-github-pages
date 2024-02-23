@@ -214,13 +214,13 @@ deployments:
               values:
               - "monolith"
             topologyKey: "kubernetes.io/hostname"
-      topologySpreadConstraints:
-        maxSkew: 0
-        topologyKey: topology.kubernetes.io/hostname
-        whenUnsatisfiable: DoNotSchedule
-        labelSelector:
-          matchLabels:
-            app.kubernetes.io/name: sample-app-2
+    topologySpreadConstraints:
+      maxSkew: 0
+      topologyKey: "topology.kubernetes.io/hostname"
+      whenUnsatisfiable: DoNotSchedule
+      labelSelector:
+        matchLabels:
+          app.kubernetes.io/name: sample-app-2
     containers:
       sample-app-2:
         <<: *common
