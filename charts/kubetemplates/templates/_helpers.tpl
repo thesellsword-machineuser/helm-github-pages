@@ -368,10 +368,6 @@ nodeSelector:
 affinity:
   {{ .affinity | toYaml }}
 {{- end }}
-{{- if .topologySpreadConstraints }}
-topologySpreadConstraints:
-  {{ .topologySpreadConstraints | toYaml }}
-{{- end }}
 restartPolicy: {{ default "Never" .restartPolicy }}
 {{- if.tolerations }}
 tolerations:
@@ -691,10 +687,6 @@ spec:
 {{- if $value.affinity }}
       affinity:
         {{ $value.affinity | toYaml }}
-{{- end -}}
-{{- if $value.topologySpreadConstraints }}
-      topologySpreadConstraints:
-        {{ $value.topologySpreadConstraints | toYaml }}
 {{- end -}}
 {{- if $value.tolerations }}
       tolerations:
