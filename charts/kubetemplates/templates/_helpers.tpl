@@ -689,12 +689,12 @@ spec:
         {{ $value.nodeSelector | toYaml }}
 {{- end -}}
 {{- if $value.affinity }}
-  affinity:
-    {{ $value.affinity | toYaml }}
+      affinity:
+        {{ $value.affinity | toYaml }}
 {{- end -}}
 {{- if $value.topologySpreadConstraints }}
-  topologySpreadConstraints:
-    {{ $value.topologySpreadConstraints | toYaml }}
+      topologySpreadConstraints:
+        {{ $value.topologySpreadConstraints | toYaml }}
 {{- end -}}
 {{- if $value.tolerations }}
       tolerations:
