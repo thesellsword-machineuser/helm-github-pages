@@ -360,31 +360,32 @@ type: {{ default "RollingUpdate" .type }}
 {{- end -}}
 
 {{- define "kubernetes.core.labelselector" -}}
-- matchLabels: {{ .matchLabels }}
+matchLabels: {{ .matchLabels | toYaml | nindent 2 }}
 {{- end }}
 
 {{- define "kubernetes.core.podaffinityterm" -}}
 - topologyKey: {{ .topologyKey }}
 {{- if .labelSelector }}
   labelSelector:
-{{- include "kubernetes.core.labelselector" .labelSelector | nindent 8 }}
+{{- include "kubernetes.core.labelselector" .labelSelector | nindent 4 }}
 {{- end -}}
 {{- end -}}
 
 {{- define "kubernetes.core.podantiaffinity" -}}
-{{- if .requiredDuringSchedulingIgnoredDuringExecution }}
+{{- if .requiredDuringSchedulingIgnoredDuringExecution -}}
   requiredDuringSchedulingIgnoredDuringExecution:
-{{- include "kubernetes.core.podaffinityterm" .requiredDuringSchedulingIgnoredDuringExecution | nindent 6}}
-{{- end -}}
+{{- range $value := .requiredDuringSchedulingIgnoredDuringExecution }}
+{{- include "kubernetes.core.podaffinityterm" $value | nindent 2}}
+{{- end }}
+{{- end }}
 {{- end -}}
 
 {{- define "kubernetes.core.affinity" -}}
-{{- if .podAntiAffinity }}
+{{- if .podAntiAffinity -}}
   podAntiAffinity:
-{{- include "kubernetes.core.podantiaffinity" | nindent 4}}
-{{- end -}}
-{{- end -}}
-
+{{- include "kubernetes.core.podantiaffinity" .podAntiAffinity | nindent 2}}
+{{- end }}
+{{- end }}
 
 {{- define "kubernetes.core.podspec" -}}
 {{- if .nodeSelector }}
@@ -721,9 +722,7 @@ spec:
 {{- end }}
 {{- if $value.affinity }}
       affinity:
-{{- range $key, $value1 := $value.affinity }}
-{{- include "kubernetes.core.affinity" $value1 | nindent 8 }}
-{{- end }}
+{{- include "kubernetes.core.affinity" $value.affinity | nindent 8 }}
 {{- end }}
 {{- if $value.terminationGracePeriodSeconds }}
       terminationGracePeriodSeconds: {{ $value.terminationGracePeriodSeconds }}
