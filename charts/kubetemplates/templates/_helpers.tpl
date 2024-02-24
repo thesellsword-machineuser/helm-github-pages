@@ -401,9 +401,7 @@ tolerations:
 {{- end }}
 {{- if.affinity }}
 affinity:
-{{- range $key, $value := .affinity }}
-{{- include "kubernetes.core.affinity" $value | nindent 2 }}
-{{- end }}
+{{- include "kubernetes.core.affinity" .affinity | nindent 2 }}
 {{- end }}
 {{- if .serviceAccountName }}
 serviceAccountName: {{ .serviceAccountName }}

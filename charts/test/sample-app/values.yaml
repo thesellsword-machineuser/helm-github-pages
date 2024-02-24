@@ -49,6 +49,13 @@ jobs:
               effect: "NoSchedule"
           nodeSelector:
             karpenter_migration: "true"
+          affinity:
+            podAntiAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                - labelSelector:
+                    matchLabels:
+                      key: value
+                  topologyKey: "kubernetes.io/hostname"
           containers:
             sample-app-job:
               <<: *common
