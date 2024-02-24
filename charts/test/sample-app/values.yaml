@@ -205,14 +205,15 @@ deployments:
     nodeSelector:
       karpenter_migration: "true"
     affinity:
-      podAntiAffinity:
-        requiredDuringSchedulingIgnoredDuringExecution:
-        - labelSelector:
-            matchExpressions:
-            - key: app.kubernetes.io/name
-              operator: In
-              values:
-              - "monolith"
+      podaffinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app.kubernetes.io/name
+                operator: In
+                values:
+                - "monolith"
             topologyKey: "kubernetes.io/hostname"
     containers:
       sample-app-2:

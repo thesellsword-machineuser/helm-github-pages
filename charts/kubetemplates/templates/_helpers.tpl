@@ -359,20 +359,49 @@ type: {{ default "RollingUpdate" .type }}
   value: {{ .value }}
 {{- end -}}
 
+{{- define "kubernetes.core.labelselector" -}}
+- matchLabels: {{ .matchLabels }}
+{{- end }}
+
+{{- define "kubernetes.core.podaffinityterm" -}}
+- topologyKey: {{ .topologyKey }}
+{{- if .labelSelector }}
+  labelSelector:
+{{- include "kubernetes.core.labelselector" .labelSelector | nindent 8 }}
+{{- end -}}
+{{- end -}}
+
+{{- define "kubernetes.core.podantiaffinity" -}}
+{{- if .requiredDuringSchedulingIgnoredDuringExecution }}
+  requiredDuringSchedulingIgnoredDuringExecution:
+{{- include "kubernetes.core.podaffinityterm" .requiredDuringSchedulingIgnoredDuringExecution | nindent 6}}
+{{- end -}}
+{{- end -}}
+
+{{- define "kubernetes.core.affinity" -}}
+{{- if .podAntiAffinity }}
+  podAntiAffinity:
+{{- include "kubernetes.core.podantiaffinity" | nindent 4}}
+{{- end -}}
+{{- end -}}
+
+
 {{- define "kubernetes.core.podspec" -}}
 {{- if .nodeSelector }}
 nodeSelector:
   {{ .nodeSelector | toYaml }}
-{{- end }}
-{{- if .affinity }}
-affinity:
-  {{ .affinity | toYaml }}
 {{- end }}
 restartPolicy: {{ default "Never" .restartPolicy }}
 {{- if.tolerations }}
 tolerations:
 {{- range $key, $value := .tolerations }}
 {{- include "kubernetes.core.toleration" $value | nindent 2 }}
+{{- end }}
+{{- end }}
+{{- if.affinity }}
+affinity:
+{{- range $key, $value := .affinity }}
+{{- include "kubernetes.core.affinity" $value | nindent 2 }}
 {{- end }}
 {{- end }}
 {{- if .serviceAccountName }}
@@ -684,14 +713,16 @@ spec:
       nodeSelector:
         {{ $value.nodeSelector | toYaml }}
 {{- end -}}
-{{- if $value.affinity }}
-      affinity:
-        {{ $value.affinity | toYaml }}
-{{- end -}}
 {{- if $value.tolerations }}
       tolerations:
 {{- range $key, $value1 := $value.tolerations }}
 {{- include "kubernetes.core.toleration" $value1 | nindent 8 }}
+{{- end }}
+{{- end }}
+{{- if $value.affinity }}
+      affinity:
+{{- range $key, $value1 := $value.affinity }}
+{{- include "kubernetes.core.affinity" $value1 | nindent 8 }}
 {{- end }}
 {{- end }}
 {{- if $value.terminationGracePeriodSeconds }}
