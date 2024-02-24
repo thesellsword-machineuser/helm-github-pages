@@ -359,14 +359,38 @@ type: {{ default "RollingUpdate" .type }}
   value: {{ .value }}
 {{- end -}}
 
+{{- define "kubernetes.core.labelselector" -}}
+matchLabels: {{ .matchLabels | toYaml | nindent 2 }}
+{{- end }}
+
+{{- define "kubernetes.core.podaffinityterm" -}}
+- topologyKey: {{ .topologyKey }}
+{{- if .labelSelector }}
+  labelSelector:
+{{- include "kubernetes.core.labelselector" .labelSelector | nindent 4 }}
+{{- end -}}
+{{- end -}}
+
+{{- define "kubernetes.core.podantiaffinity" -}}
+{{- if .requiredDuringSchedulingIgnoredDuringExecution -}}
+  requiredDuringSchedulingIgnoredDuringExecution:
+{{- range $value := .requiredDuringSchedulingIgnoredDuringExecution }}
+{{- include "kubernetes.core.podaffinityterm" $value | nindent 2}}
+{{- end }}
+{{- end }}
+{{- end -}}
+
+{{- define "kubernetes.core.affinity" -}}
+{{- if .podAntiAffinity -}}
+  podAntiAffinity:
+{{- include "kubernetes.core.podantiaffinity" .podAntiAffinity | nindent 2}}
+{{- end }}
+{{- end }}
+
 {{- define "kubernetes.core.podspec" -}}
 {{- if .nodeSelector }}
 nodeSelector:
   {{ .nodeSelector | toYaml }}
-{{- end }}
-{{- if .affinity }}
-affinity:
-  {{ .affinity | toYaml }}
 {{- end }}
 restartPolicy: {{ default "Never" .restartPolicy }}
 {{- if.tolerations }}
@@ -374,6 +398,10 @@ tolerations:
 {{- range $key, $value := .tolerations }}
 {{- include "kubernetes.core.toleration" $value | nindent 2 }}
 {{- end }}
+{{- end }}
+{{- if.affinity }}
+affinity:
+{{- include "kubernetes.core.affinity" .affinity | nindent 2 }}
 {{- end }}
 {{- if .serviceAccountName }}
 serviceAccountName: {{ .serviceAccountName }}
@@ -684,15 +712,15 @@ spec:
       nodeSelector:
         {{ $value.nodeSelector | toYaml }}
 {{- end -}}
-{{- if $value.affinity }}
-      affinity:
-        {{ $value.affinity | toYaml }}
-{{- end -}}
 {{- if $value.tolerations }}
       tolerations:
 {{- range $key, $value1 := $value.tolerations }}
 {{- include "kubernetes.core.toleration" $value1 | nindent 8 }}
 {{- end }}
+{{- end }}
+{{- if $value.affinity }}
+      affinity:
+{{- include "kubernetes.core.affinity" $value.affinity | nindent 8 }}
 {{- end }}
 {{- if $value.terminationGracePeriodSeconds }}
       terminationGracePeriodSeconds: {{ $value.terminationGracePeriodSeconds }}
