@@ -387,6 +387,28 @@ matchLabels: {{ .matchLabels | toYaml | nindent 2 }}
 {{- end }}
 {{- end }}
 
+{{- define "kubernetes.core.topologyspreadconstraints" -}}
+- maxSkew: {{ .maxSkew }}
+  topologyKey: {{ .topologyKey }}
+  whenUnsatisfiable: {{ .whenUnsatisfiable }}
+{{- if .matchLabelKeys }}
+  matchLabelKeys: {{ .matchLabelKeys }}
+{{- end }}
+{{- if .minDomains }}
+  minDomains: {{ .minDomains }}
+{{- end }}
+{{- if .nodeAffinityPolicy }}
+  nodeAffinityPolicy: {{ .nodeAffinityPolicy }}
+{{- end }}
+{{- if .nodeTaintsPolicy }}
+  nodeTaintsPolicy: {{ .nodeTaintsPolicy }}
+{{- end }}
+{{- if .labelSelector }}
+  labelSelector:
+{{- include "kubernetes.core.labelselector" .labelSelector | nindent 4 }}
+{{- end }}
+{{- end }}
+
 {{- define "kubernetes.core.podspec" -}}
 {{- if .nodeSelector }}
 nodeSelector:
@@ -402,6 +424,10 @@ tolerations:
 {{- if.affinity }}
 affinity:
 {{- include "kubernetes.core.affinity" .affinity | nindent 2 }}
+{{- end }}
+{{- if.topologySpreadConstraints }}
+topologySpreadConstraints:
+{{- include "kubernetes.core.topologyspreadconstraints" .topologySpreadConstraints | nindent 2 }}
 {{- end }}
 {{- if .serviceAccountName }}
 serviceAccountName: {{ .serviceAccountName }}
@@ -721,6 +747,10 @@ spec:
 {{- if $value.affinity }}
       affinity:
 {{- include "kubernetes.core.affinity" $value.affinity | nindent 8 }}
+{{- end }}
+{{- if $value.topologySpreadConstraints }}
+      topologyspreadConstraints:
+{{- include "kubernetes.core.topologyspreadconstraints" $value.topologySpreadConstraints | nindent 8 }}
 {{- end }}
 {{- if $value.terminationGracePeriodSeconds }}
       terminationGracePeriodSeconds: {{ $value.terminationGracePeriodSeconds }}
