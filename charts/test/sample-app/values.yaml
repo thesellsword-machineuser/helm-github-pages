@@ -56,6 +56,14 @@ jobs:
                     matchLabels:
                       key: value
                   topologyKey: "kubernetes.io/hostname"
+          topologySpreadConstraints:
+            maxSkew: 2
+            topologyKey: "kubernetes.io/hostname"
+            whenUnsatisfiable: DoNotSchedule
+            nodeAffinityPolicy: Honour
+            labelSelector:
+              matchLabels:
+                key: value
           containers:
             sample-app-job:
               <<: *common
@@ -218,6 +226,13 @@ deployments:
               matchLabels:
                 key: value
             topologyKey: "kubernetes.io/hostname"
+    topologySpreadConstraints:
+      maxSkew: 2
+      topologyKey: "kubernetes.io/hostname"
+      whenUnsatisfiable: DoNotSchedule
+      labelSelector:
+        matchLabels:
+          key: value
     containers:
       sample-app-2:
         <<: *common
