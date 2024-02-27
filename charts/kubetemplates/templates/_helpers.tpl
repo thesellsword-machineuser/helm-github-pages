@@ -749,7 +749,7 @@ spec:
 {{- include "kubernetes.core.affinity" $value.affinity | nindent 8 }}
 {{- end }}
 {{- if $value.topologySpreadConstraints }}
-      topologyspreadConstraints:
+      topologySpreadConstraints:
 {{- include "kubernetes.core.topologyspreadconstraints" $value.topologySpreadConstraints | nindent 8 }}
 {{- end }}
 {{- if $value.terminationGracePeriodSeconds }}
