@@ -415,19 +415,21 @@ nodeSelector:
   {{ .nodeSelector | toYaml }}
 {{- end }}
 restartPolicy: {{ default "Never" .restartPolicy }}
-{{- if.tolerations }}
+{{- if .tolerations }}
 tolerations:
 {{- range $key, $value := .tolerations }}
 {{- include "kubernetes.core.toleration" $value | nindent 2 }}
 {{- end }}
 {{- end }}
-{{- if.affinity }}
+{{- if .affinity }}
 affinity:
 {{- include "kubernetes.core.affinity" .affinity | nindent 2 }}
 {{- end }}
-{{- if.topologySpreadConstraints }}
+{{- if .topologySpreadConstraints }}
 topologySpreadConstraints:
-{{- include "kubernetes.core.topologyspreadconstraints" .topologySpreadConstraints | nindent 2 }}
+{{- range $key, $value := .topologySpreadConstraints }}
+{{- include "kubernetes.core.topologyspreadconstraints" $value | nindent 2 }}
+{{- end }}
 {{- end }}
 {{- if .serviceAccountName }}
 serviceAccountName: {{ .serviceAccountName }}
@@ -750,7 +752,9 @@ spec:
 {{- end }}
 {{- if $value.topologySpreadConstraints }}
       topologySpreadConstraints:
-{{- include "kubernetes.core.topologyspreadconstraints" $value.topologySpreadConstraints | nindent 8 }}
+{{- range $key, $value1 := $value.topologySpreadConstraints }}
+{{- include "kubernetes.core.topologyspreadconstraints" $value1 | nindent 8 }}
+{{- end }}
 {{- end }}
 {{- if $value.terminationGracePeriodSeconds }}
       terminationGracePeriodSeconds: {{ $value.terminationGracePeriodSeconds }}
