@@ -145,6 +145,9 @@ deployments:
     replicaCount: 3
     deploymentStrategy:
       type: RollingUpdate
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 10%
     restartPolicy: Always
     serviceAccountName: svc-acct-name
     containers:

@@ -2,4 +2,4 @@ apiVersion: v1
 appVersion: "1.0"
 description: A Helm chart for Kubernetes
 name: kubetemplates
-version: 1.26.0-beta.0
+version: 1.29.0-beta.0

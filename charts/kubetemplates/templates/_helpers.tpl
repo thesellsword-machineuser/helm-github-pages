@@ -341,12 +341,12 @@ items: {{ .items }}
 {{- end -}}
 
 {{- define "kubernetes.apps.deploymentstrategy" -}}
+type: {{ default "RollingUpdate" .type }}
 {{- if .rollingUpdate }}
 rollingUpdate:
   maxSurge: {{ default "25%" .rollingUpdate.maxSurge }}
   maxUnavailable: {{ default "25%" .rollingUpdate.maxUnavailable }}
-{{- end -}}
-type: {{ default "RollingUpdate" .type }}
+{{- end }}
 {{- end -}}
 
 {{- define "kubernetes.core.toleration" -}}
